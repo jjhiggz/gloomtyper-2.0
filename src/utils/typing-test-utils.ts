@@ -12,19 +12,18 @@ export const determineLetterState = ({
   correctToIndex: number;
 }) => {
   if (letterIndex >= correctWord.length) {
-
     return "excess";
   }
 
   if (letterIndex >= correctToIndex && letterIndex >= currentlyTyped.length) {
     if (currentlyTyped.length > correctToIndex) {
       if (letterIndex >= currentlyTyped.length) {
-        return "untouched"
+        return "untouched";
       }
-      return letterIndex > correctToIndex ? "wrong" : "untouched"
+      return letterIndex > correctToIndex ? "wrong" : "untouched";
     }
 
-    return "untouched"
+    return "untouched";
   }
 
   if (letterIndex >= correctToIndex) {
@@ -51,9 +50,8 @@ export const getCorrectToIndex = ({
       return i;
     }
   }
-  return correct.length
+  return correct.length;
 };
-
 
 export const createTrackedWords = (input: string): TrackedWord[] =>
   input.split(" ").map((input, index) => ({
@@ -61,3 +59,7 @@ export const createTrackedWords = (input: string): TrackedWord[] =>
     current: "",
     index,
   }));
+
+export const getRandomItem = <T>(myArray: T[]) => {
+  return myArray[Math.floor(Math.random() * myArray.length)] as T;
+};

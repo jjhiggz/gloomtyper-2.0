@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useSampler } from "~/hooks/useSampler";
 import { type TrackedWord } from "~/types";
-import { createTrackedWords } from "~/utils/typing-test-utils";
+import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
 import { Word } from "./Word";
 import { usePlayer } from "~/hooks/usePlayer";
 
@@ -45,8 +45,8 @@ export const GameBoard = ({
     const lastKey = e.target.value.at(-1);
 
     if (lastKey === " ") {
-      sampler?.triggerAttack("C2");
       const trackedWord = trackedWords[wordIndex];
+      sampler?.triggerAttack("C5");
       if (trackedWord?.correct !== trackedWord?.current) {
         setIncorrectCount((incorrectCount) => incorrectCount + 1);
       } else {
@@ -58,7 +58,8 @@ export const GameBoard = ({
       return;
     }
 
-    sampler?.triggerAttack("C1");
+    const key = getRandomItem(["C1", "C2", "C3"]);
+    sampler?.triggerAttack(key);
     setInputState(e.target.value);
     setTrackedWords(
       trackedWords.map((trackedWord, trackedWordIndex) => {
