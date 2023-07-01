@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from "react";
 import { Player } from "tone";
 
+// @ts-ignore
 import inGameMusic from "../../public/inGameMusic.mp3";
 
 export const usePlayer = () => {
@@ -8,8 +10,8 @@ export const usePlayer = () => {
 
   useEffect(() => {
     const playerInstance = new Player(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      inGameMusic,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      inGameMusic as any,
       () => {
         setPlayer(playerInstance);
       }
