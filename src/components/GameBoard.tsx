@@ -11,15 +11,16 @@ import { type TrackedWord } from "~/types";
 import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
 import { Word } from "./Word";
 import { usePlayer } from "~/hooks/usePlayer";
-
-const gameText = `ase shot ye heave to pinnace belaying pin brigantine poop deck gangplank Jack `;
+import { type GameText } from "@prisma/client";
 
 export const GameBoard = ({
   setCorrectCount,
   setIncorrectCount,
+  gameText,
 }: {
   setCorrectCount: Dispatch<SetStateAction<number>>;
   setIncorrectCount: Dispatch<SetStateAction<number>>;
+  gameText: GameText;
 }) => {
   const sampler = useSampler();
   const player = usePlayer();
@@ -27,7 +28,7 @@ export const GameBoard = ({
   const [wordIndex, setWordIndex] = useState(0);
   const [inputState, setInputState] = useState("");
   const [trackedWords, setTrackedWords] = useState<TrackedWord[]>(
-    createTrackedWords(gameText)
+    createTrackedWords(gameText.content)
   );
 
   useEffect(() => {
@@ -38,6 +39,10 @@ export const GameBoard = ({
       player?.stop();
     }
   }, [wordIndex]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -72,6 +77,7 @@ export const GameBoard = ({
   };
   return (
     <>
+      <h1>{gameText.name}</h1>
       <div
         id="game-container"
         className="flex h-44 w-full flex-wrap items-start bg-slate-800 p-3 text-xl text-slate-200"

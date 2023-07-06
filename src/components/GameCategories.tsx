@@ -1,17 +1,21 @@
-import { type Category } from "@prisma/client";
-import { useState } from "react";
-import { api } from "~/utils/api";
+import { type GameText, type Category } from "@prisma/client";
+import { type Dispatch, type SetStateAction, useState } from "react";
 
-export const GameCategories = () => {
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-
-  const { data: categoryData } = api.gameRouter.getAllCategories.useQuery();
-
-  const { data: games } = api.gameRouter.getAllGamesWithCategoryId.useQuery(
-    activeCategory?.id || null,
-    { enabled: !!activeCategory }
-  );
-
+export const GameCategories = ({
+  categoryData,
+  setActiveCategory,
+  gamesData,
+  activeCategory,
+  gameData,
+  setActiveGame,
+}: {
+  categoryData: Category[];
+  activeCategory: Category | null;
+  setActiveCategory: Dispatch<SetStateAction<Category | null>>;
+  setActiveGame: Dispatch<SetStateAction<GameText | null>>;
+  gamesData: GameText[];
+  gameData: GameText | null;
+}) => {
   return (
     <div>
       <h1 className="text-6xl text-white">Categories</h1>
@@ -37,11 +41,17 @@ export const GameCategories = () => {
         )}
       </div>
       <h1 className="text-6xl text-white">Games</h1>
-      {!games && <h3>loading...</h3>}
-      {games && (
+      {!gamesData && <h3>loading...</h3>}
+      {gamesData && (
         <div>
-          {games?.map((game) => (
-            <li key={game.id} className="text-white">
+          {gamesData?.map((game) => (
+            <li
+              key={game.id}
+              className="text-white"
+              onClick={() => {
+                setActiveGame(game);
+              }}
+            >
               {game.name}
             </li>
           ))}
