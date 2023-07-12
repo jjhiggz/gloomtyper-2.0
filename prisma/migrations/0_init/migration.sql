@@ -41,3 +41,4 @@ ALTER TABLE "_CategoryToGameText" ADD CONSTRAINT "_CategoryToGameText_A_fkey" FO
 
 -- AddForeignKey
 ALTER TABLE "_CategoryToGameText" ADD CONSTRAINT "_CategoryToGameText_B_fkey" FOREIGN KEY ("B") REFERENCES "GameText"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
