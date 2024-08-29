@@ -1,35 +1,20 @@
-import {
-  type ChangeEventHandler,
-  useRef,
-  useState,
-  type Dispatch,
-  type SetStateAction,
-  useEffect,
-} from "react";
+import { type ChangeEventHandler, useRef, useState, useEffect } from "react";
 import { useSampler } from "~/hooks/useSampler";
 import { type TrackedWord } from "~/types";
 import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
 import { Word } from "./Word";
 import { usePlayer } from "~/hooks/usePlayer";
-import { type GameText } from "@prisma/client";
+import { useGameProvider } from "~/providers/GameProvider";
 
-export const GameBoard = ({
-  setCorrectCount,
-  setIncorrectCount,
-  gameText,
-}: {
-  setCorrectCount: Dispatch<SetStateAction<number>>;
-  setIncorrectCount: Dispatch<SetStateAction<number>>;
-  gameText: GameText;
-}) => {
+export const GameBoard = () => {
+  const { setCorrectCount, setIncorrectCount, activeGame } = useGameProvider();
+
   const sampler = useSampler();
   const player = usePlayer();
 
   const [wordIndex, setWordIndex] = useState(0);
   const [inputState, setInputState] = useState("");
-  const [trackedWords, setTrackedWords] = useState<TrackedWord[]>(
-    createTrackedWords(gameText.content)
-  );
+  const [trackedWords, setTrackedWords] = useState<TrackedWord[]>([]);
 
   useEffect(() => {
     if (wordIndex === 1) {
@@ -38,11 +23,17 @@ export const GameBoard = ({
     if (wordIndex === trackedWords.length) {
       player?.stop();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wordIndex]);
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (activeGame) inputRef.current?.focus();
+  }, [activeGame]);
+
+  useEffect(() => {
+    if (activeGame) setTrackedWords(createTrackedWords(activeGame.content));
+    else setTrackedWords([]);
+  }, [activeGame]);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -75,12 +66,14 @@ export const GameBoard = ({
       })
     );
   };
+  if (!activeGame) return <></>;
+
   return (
     <>
-      <h1>{gameText.name}</h1>
+      <h1>{activeGame.name}</h1>
       <div
         id="game-container"
-        className="flex h-44 w-full flex-wrap items-start bg-slate-800 p-3 text-xl text-slate-200"
+        className="flex  w-full flex-wrap items-start bg-transparent p-3 py-8 text-xl text-slate-900"
         onClick={() => {
           inputRef.current?.focus();
         }}

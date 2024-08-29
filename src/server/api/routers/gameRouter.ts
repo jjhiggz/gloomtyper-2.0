@@ -1,33 +1,52 @@
-
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { sample } from "remeda";
+import { type GameText } from "@prisma/client";
 
 export const gameRouter = createTRPCRouter({
-    hello: publicProcedure
-        .input(z.object({ text: z.string() }))
-        .query(({ input }) => {
-            return {
-                greeting: `Hello ${input.text}`,
-            };
-        }),
-    getAllCategories: publicProcedure
-        .query(async ({ ctx }) => {
-            return await ctx.prisma.category.findMany()
-        }),
+  hello: publicProcedure
+    .input(z.object({ text: z.string() }))
+    .query(({ input }) => {
+      return {
+        greeting: `Hello ${input.text}`,
+      };
+    }),
+  getAllCategories: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.category.findMany();
+  }),
 
-    getAllGamesWithCategoryId: publicProcedure.input(z.union([z.string(), z.null()])).query(({ input, ctx }) => {
-        if (input === null) {
-            return null
-        }
+  getAllGamesWithCategoryId: publicProcedure
+    .input(z.union([z.string(), z.null()]))
+    .query(({ input, ctx }) => {
+      if (input === null) {
+        return null;
+      }
 
-        return ctx.prisma.gameText.findMany({
-            where: {
-                categories: {
-                    some: {
-                        id: input
-                    }
-                }
-            }
-        });
+      return ctx.prisma.gameText.findMany({
+        where: {
+          categories: {
+            some: {
+              id: input,
+            },
+          },
+        },
+      });
+    }),
+  getRandomGameWithCategoryId: publicProcedure
+    .input(z.string())
+    .query(async ({ input, ctx }) => {
+      const games = await ctx.prisma.gameText.findMany({
+        where: {
+          categories: {
+            some: {
+              id: input,
+            },
+          },
+        },
+      });
+
+      if (!games) return;
+      const randomGame = sample(games, 1)[0];
+      return randomGame;
     }),
 });

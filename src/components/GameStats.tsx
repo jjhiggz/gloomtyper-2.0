@@ -1,12 +1,9 @@
-export const GameStats = ({
-  correctCount,
-  incorrectCount,
-}: {
-  correctCount: number;
-  incorrectCount: number;
-}) => {
+import { useGameProvider } from "~/providers/GameProvider";
+
+export const GameStats = () => {
+  const { incorrectCount, correctCount } = useGameProvider();
   return (
-    <div className="flex  h-28 w-full items-center justify-between bg-amber-600 px-10 text-white">
+    <div className="flex  h-28 w-full items-center justify-between  text-white">
       <h3 className="text-3xl">Game Stats</h3>
       <div className="flex flex-col bg-slate-500 px-5 py-2">
         <div>

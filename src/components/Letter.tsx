@@ -13,7 +13,7 @@ export const Letter = ({
       return "text-red-600";
     }
     if (status === "untouched") {
-      return "text-white";
+      return "text-slate-800";
     }
     if (status === "wrong") {
       return "text-red-500";
