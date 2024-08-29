@@ -34,6 +34,7 @@ export const useSampler = () => {
         onload: () => {
           setSampler(samplerInstance);
         },
+        volume: -20,
       }
     ).toDestination();
     return () => {

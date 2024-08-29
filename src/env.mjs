@@ -9,13 +9,7 @@ export const env = createEnv({
   server: {
     // DATABASE_URL: z.string().url(),
     NODE_ENV: z.enum(["development", "test", "production"]),
-    POSTGRES_URL: z.string(),
-    POSTGRES_PRISMA_URL: z.string(),
-    POSTGRES_URL_NON_POOLING: z.string(),
-    POSTGRES_USER: z.string(),
-    POSTGRES_HOST: z.string(),
-    POSTGRES_PASSWORD: z.string(),
-    POSTGRES_DATABASE: z.string(),
+    DATABASE_URL: z.string(),
   },
   // will this trigger a redeploy
 
@@ -33,13 +27,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    POSTGRES_URL: process.env.POSTGRES_URL,
-    POSTGRES_PRISMA_URL: process.env.POSTGRES_PRISMA_URL,
-    POSTGRES_URL_NON_POOLING: process.env.POSTGRES_URL_NON_POOLING,
-    POSTGRES_USER: process.env.POSTGRES_USER,
-    POSTGRES_HOST: process.env.POSTGRES_HOST,
-    POSTGRES_PASSWORD: process.env.POSTGRES_PASSWORD,
-    POSTGRES_DATABASE: process.env.POSTGRES_DATABASE,
+    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
