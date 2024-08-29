@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { GameBoard } from "~/components/GameBoard";
-import { GameStats } from "~/components/GameStats";
 import Header from "~/components/Header";
 import NoSSR from "~/components/NoSSR";
 import { GameProvider } from "~/providers/GameProvider";
@@ -18,7 +17,6 @@ function Home() {
         <main className="flex min-h-screen w-full flex-col items-center justify-start border-r-8  px-24">
           <NoSSR>
             <Header />
-            <GameStats />
             <GameBoard />
           </NoSSR>
         </main>
