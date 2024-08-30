@@ -13,6 +13,7 @@ import {
 } from "react";
 import { usePlayer } from "~/hooks/usePlayer";
 import { useSampler } from "~/hooks/useSampler";
+import useTimer from "~/hooks/useTimer";
 import { type TrackedWord } from "~/types";
 import { apiRaw } from "~/utils/api";
 import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
@@ -29,24 +30,69 @@ type TGameContext = {
   activeCategory: Category | null;
   setActiveCategory: Setter<Category | null>;
   activeGame: GameText | null;
-  startGame: (categoryId: Category["id"]) => Promise<unknown>;
+  loadGame: (categoryId: Category["id"]) => Promise<unknown>;
   setActiveGame: Setter<GameText | null>;
   inputHandler: ChangeEventHandler<HTMLInputElement>;
   inputState: string;
   inputRef: RefObject<HTMLInputElement>;
   trackedWords: TrackedWord[];
   wordIndex: number;
+  timerProps: ReturnType<typeof useTimer>;
+  gameState: GameState;
 };
 
 const GameContext = createContext<TGameContext | null>(null);
+
+const getGameState = ({
+  activeGame,
+  isRunning,
+  totalCount,
+}: {
+  activeGame: null | GameText;
+  isRunning: boolean;
+  totalCount: number;
+}): GameState => {
+  if (!activeGame) return "none-selected";
+  if (isRunning) return "active";
+  if (totalCount) return "finished";
+  if (!totalCount) return "pending";
+  throw new Error("Unhandled Case in `getGameState`");
+};
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeGame, setActiveGame] = useState<null | GameText>(null);
+  const sampler = useSampler();
+  const player = usePlayer();
 
-  const startGame = async (categoryId?: Category["id"]) => {
+  const [wordIndex, setWordIndex] = useState(0);
+  const [inputState, setInputState] = useState("");
+  const [trackedWords, setTrackedWords] = useState<TrackedWord[]>([]);
+
+  const timerProps = useTimer(0);
+
+  const gameState = getGameState({
+    activeGame,
+    isRunning: timerProps.isRunning,
+    totalCount: correctCount + incorrectCount,
+  });
+
+  const resetToNextGame = () => {
+    setCorrectCount(0);
+    setIncorrectCount(0);
+    setActiveGame(null);
+    setWordIndex(0);
+    setInputState("");
+    setTrackedWords([]);
+    timerProps.pause();
+    timerProps.reset();
+  };
+
+  const loadGame = async (categoryId?: Category["id"]) => {
+    resetToNextGame();
+    inputRef.current?.focus();
     if (categoryId) {
       const category = await apiRaw.gameRouter.getCategory
         .query(categoryId)
@@ -71,13 +117,6 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const sampler = useSampler();
-  const player = usePlayer();
-
-  const [wordIndex, setWordIndex] = useState(0);
-  const [inputState, setInputState] = useState("");
-  const [trackedWords, setTrackedWords] = useState<TrackedWord[]>([]);
-
   useEffect(() => {
     if (wordIndex === 1) {
       player?.start();
@@ -100,9 +139,44 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const inputHandler: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const lastKey = e.target.value.at(-1);
+    const mostRecentKey = e.target.value.at(-1);
+    const isFirstWord = wordIndex === 0;
+    const isLastWord = wordIndex === trackedWords.length - 1;
+    const isLastWordComplete =
+      inputState.length === trackedWords?.at(-1)?.correct?.length && isLastWord;
 
-    if (lastKey === " ") {
+    const isCompleteByWordCount =
+      incorrectCount + correctCount >= trackedWords.length;
+
+    if (isCompleteByWordCount) {
+      timerProps.pause();
+    }
+    if (isLastWordComplete && !isCompleteByWordCount) {
+      const trackedWord = trackedWords[wordIndex];
+      if (trackedWord?.correct !== trackedWord?.current) {
+        setIncorrectCount((incorrectCount) => incorrectCount + 1);
+      } else {
+        setCorrectCount((correctCount) => correctCount + 1);
+      }
+    }
+
+    if (isCompleteByWordCount || isLastWordComplete) {
+      return;
+    }
+    // if (isComplete) alert("Complete");
+    // if (isComplete) {
+    //   return;
+    // }
+
+    // if (isComplete) timerProps.pause();
+
+    const hasFirstLetterBeenTyped = isFirstWord && e.target.value.length === 1;
+
+    if (hasFirstLetterBeenTyped && !timerProps.isRunning) {
+      timerProps.start();
+    }
+
+    if (mostRecentKey === " ") {
       const trackedWord = trackedWords[wordIndex];
       sampler?.triggerAttack("C5");
       if (trackedWord?.correct !== trackedWord?.current) {
@@ -141,11 +215,13 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
         setActiveCategory,
         activeGame,
         setActiveGame,
-        startGame,
+        loadGame,
         inputHandler,
         inputRef,
         trackedWords,
         wordIndex,
+        timerProps,
+        gameState,
       }}
     >
       {children}

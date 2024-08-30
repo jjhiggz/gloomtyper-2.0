@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 
 export const Header = () => {
   const { data: allCategories } = api.gameRouter.getAllCategories.useQuery();
-  const { startGame: startGameForCategory } = useGameProvider();
+  const { loadGame: startGameForCategory } = useGameProvider();
   return (
     <header className="flex w-full items-center justify-between border-b border-slate-200 bg-white px-6 py-4 shadow-sm">
       <div className="flex items-center space-x-4">
