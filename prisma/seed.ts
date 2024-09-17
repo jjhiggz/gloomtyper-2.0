@@ -98,7 +98,7 @@ async function runSeed() {
             id: jokes.id,
           },
           {
-            id: bookQuotes.id,
+            id: jonQuotes.id,
           },
         ],
       },
