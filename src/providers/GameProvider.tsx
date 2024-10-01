@@ -129,6 +129,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       setActiveGame(randomGame);
     }
   };
+
   useBeforeRefresh(() => {
     resetToNextGame();
   });
