@@ -79,6 +79,10 @@ export const gameRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          author: true,
+          categories: true,
+        },
       });
     }),
   getRandomGameWithCategoryId: publicProcedure
