@@ -25,15 +25,6 @@ export const FinishedGameBoard = () => {
       <div>
         <b>Incorrect:</b> {incorrectCount}
       </div>
-      <div className="flex gap-2">
-        <b>Author:</b>
-        <Link
-          href={`/authors/${quote?.author.id ?? ""}`}
-          className="flex items-center text-base text-blue-500 underline"
-        >
-          {quote?.author.name}
-        </Link>
-      </div>
       <div className="flex  gap-2">
         <b>Categories:</b>
         {quote?.categories.map((category) => (
