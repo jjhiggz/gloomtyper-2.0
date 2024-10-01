@@ -4,7 +4,7 @@ export const InGameStats = () => {
   const { incorrectCount, correctCount, activeGame, timerProps } =
     useGameProvider();
   return (
-    <div className="flex h-16 w-full  items-center justify-between bg-slate-300">
+    <div className="flex h-16 w-full  items-center justify-between bg-slate-300 px-5">
       <div>Time: {timerProps.time}</div>
       <div>
         {correctCount + incorrectCount} /{" "}
