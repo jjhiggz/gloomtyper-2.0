@@ -1,4 +1,4 @@
-import { type GameText, type Category } from "@prisma/client";
+import { type Quote, type Category } from "@prisma/client";
 import {
   createContext,
   type ReactNode,
@@ -30,9 +30,9 @@ type TGameContext = {
   setIncorrectCount: Setter<number>;
   activeCategory: Category | null;
   setActiveCategory: Setter<Category | null>;
-  activeGame: GameText | null;
+  activeGame: Quote | null;
   loadGame: (categoryId: Category["id"]) => Promise<unknown>;
-  setActiveGame: Setter<GameText | null>;
+  setActiveGame: Setter<Quote | null>;
   inputHandler: ChangeEventHandler<HTMLInputElement>;
   inputState: string;
   inputRef: RefObject<HTMLInputElement>;
@@ -49,7 +49,7 @@ const getGameState = ({
   isRunning,
   totalCount,
 }: {
-  activeGame: null | GameText;
+  activeGame: null | Quote;
   isRunning: boolean;
   totalCount: number;
 }): GameState => {
@@ -64,7 +64,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [correctCount, setCorrectCount] = useState(0);
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeGame, setActiveGame] = useState<null | GameText>(null);
+  const [activeGame, setActiveGame] = useState<null | Quote>(null);
 
   const sampler = useSampler();
   const player = usePlayer();

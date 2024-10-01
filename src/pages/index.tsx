@@ -26,9 +26,5 @@ function Home() {
 }
 
 export default function HomePage(props: any) {
-  return (
-    // <NoSSR>
-    <Home />
-    // </NoSSR>
-  );
+  return <Home />;
 }
