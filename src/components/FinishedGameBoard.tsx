@@ -25,15 +25,6 @@ export const FinishedGameBoard = () => {
       <div>
         <b>Incorrect:</b> {incorrectCount}
       </div>
-      <div className="flex gap-2">
-        <b>Author:</b>
-        <Link
-          href={`/authors/${quote?.author.id ?? ""}`}
-          className="flex items-center text-base text-blue-500 underline"
-        >
-          {quote?.author.name}
-        </Link>
-      </div>
       <div className="flex  gap-2">
         <b>Categories:</b>
         {quote?.categories.map((category) => (
@@ -46,6 +37,14 @@ export const FinishedGameBoard = () => {
           </Link>
         ))}
       </div>
+
+      {activeGame?.link && (
+        <a href={activeGame?.link} target="_blank" rel="noopener noreferrer">
+          <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+            View Quote
+          </button>
+        </a>
+      )}
     </div>
   );
 };

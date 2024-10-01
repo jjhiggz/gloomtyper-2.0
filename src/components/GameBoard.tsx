@@ -3,6 +3,7 @@ import { useGameProvider } from "~/providers/GameProvider";
 import { InGameStats } from "./InGameStats";
 import { NoGameBoard } from "./NoGameBoard";
 import { FinishedGameBoard } from "./FinishedGameBoard";
+import Link from "next/link";
 
 export const GameBoard = () => {
   const {
@@ -17,7 +18,19 @@ export const GameBoard = () => {
 
   return (
     <div className="mt-10 w-full">
-      <h1 className="h-10 text-center text-2xl">{activeGame?.name ?? ""}</h1>
+      {activeGame && (
+        <div className="flex w-full flex-row items-center justify-center gap-2">
+          <Link href={`/quotes/${activeGame.id}`}>
+            <h1 className="h-10 text-center text-2xl italic text-blue-500 hover:text-blue-700">
+              {`"${activeGame?.name ?? ""}"`}
+            </h1>
+          </Link>{" "}
+          -
+          <Link href={`/authors/${activeGame.authorId}`}>
+            {activeGame?.author?.name}
+          </Link>
+        </div>
+      )}
       <div className="flex h-80 w-full flex-col justify-start rounded-2xl bg-slate-100 text-center font-mono text-2xl text-slate-500">
         {(gameState === "active" || gameState === "pending") && (
           <>
