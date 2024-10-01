@@ -17,6 +17,7 @@ import useTimer from "~/hooks/useTimer";
 import { type TrackedWord } from "~/types";
 import { apiRaw } from "~/utils/api";
 import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
+import { useKeyListener } from "~/hooks/useKeyListener";
 
 type Setter<T> = Dispatch<SetStateAction<T>>;
 
@@ -64,6 +65,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   const [incorrectCount, setIncorrectCount] = useState(0);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [activeGame, setActiveGame] = useState<null | GameText>(null);
+
   const sampler = useSampler();
   const player = usePlayer();
 
@@ -203,6 +205,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  useKeyListener({
+    activeWhen: gameState === "finished" || gameState === "none-selected",
+    keys: ["Tab"],
+    handler: () => {
+      resetToNextGame();
+      loadGame(activeCategory?.id).catch(console.error);
+    },
+  });
   return (
     <GameContext.Provider
       value={{
