@@ -3,12 +3,27 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { sample } from "remeda";
 
 export const gameRouter = createTRPCRouter({
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
-      };
+  getAllAuthors: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.author.findMany();
+  }),
+  getAuthor: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ ctx, input }) => {
+      if (!input) {
+        return null;
+      }
+      return await ctx.prisma.author.findFirst({
+        where: {
+          id: input,
+        },
+        include: {
+          quotes: {
+            include: {
+              categories: true,
+            },
+          },
+        },
+      });
     }),
   getQuote: publicProcedure
     .input(z.string().optional())
