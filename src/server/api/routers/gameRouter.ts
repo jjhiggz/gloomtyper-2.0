@@ -30,7 +30,7 @@ export const gameRouter = createTRPCRouter({
         return null;
       }
 
-      return ctx.prisma.gameText.findMany({
+      return ctx.prisma.quote.findMany({
         where: {
           categories: {
             some: {
@@ -43,7 +43,7 @@ export const gameRouter = createTRPCRouter({
   getRandomGameWithCategoryId: publicProcedure
     .input(z.string())
     .query(async ({ input, ctx }) => {
-      const games = await ctx.prisma.gameText.findMany({
+      const games = await ctx.prisma.quote.findMany({
         where: {
           categories: {
             some: {
@@ -58,7 +58,7 @@ export const gameRouter = createTRPCRouter({
       return randomGame;
     }),
   getRandomGame: publicProcedure.query(async ({ ctx }) => {
-    const games = await ctx.prisma.gameText.findMany({
+    const games = await ctx.prisma.quote.findMany({
       include: {
         categories: true,
       },
