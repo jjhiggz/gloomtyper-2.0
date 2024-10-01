@@ -32,7 +32,7 @@ export const Word = ({
   )}`;
 
   return (
-    <div className={`mr-2 h-5 ${isActive ? "bg-slate-600" : ""}`}>
+    <div className={`mr-2  ${isActive ? "bg-slate-200" : ""} font-mono`}>
       {renderWord.split("").map((letter, letterIndex) => {
         const letterState = determineLetterState({
           correctToIndex,

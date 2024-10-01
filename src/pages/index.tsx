@@ -1,24 +1,10 @@
-import { type Category, type GameText } from "@prisma/client";
 import Head from "next/head";
-import { useState } from "react";
 import { GameBoard } from "~/components/GameBoard";
-import { GameCategories } from "~/components/GameCategories";
-import { GameStats } from "~/components/GameStats";
+import Header from "~/components/Header";
 import NoSSR from "~/components/NoSSR";
-import { api } from "~/utils/api";
+import { GameProvider } from "~/providers/GameProvider";
 
 function Home() {
-  const [correctCount, setCorrectCount] = useState(0);
-  const [incorrectCount, setIncorrectCount] = useState(0);
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeGame, setActiveGame] = useState<null | GameText>(null);
-  const { data: categoryData } = api.gameRouter.getAllCategories.useQuery();
-
-  const { data: games } = api.gameRouter.getAllGamesWithCategoryId.useQuery(
-    activeCategory?.id || null,
-    { enabled: !!activeCategory }
-  );
-
   return (
     <>
       <Head>
@@ -27,29 +13,14 @@ function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex min-h-screen flex-col items-center justify-center border-r-8 bg-gradient-to-b from-[#2e026d] to-[#15162c] px-24">
-        <GameCategories
-          categoryData={categoryData || []}
-          gamesData={games || []}
-          activeCategory={activeCategory}
-          setActiveCategory={setActiveCategory}
-          setActiveGame={setActiveGame}
-          gameData={activeGame}
-        />
-        <GameStats
-          correctCount={correctCount}
-          incorrectCount={incorrectCount}
-        />
-        <NoSSR>
-          {activeGame && (
-            <GameBoard
-              setCorrectCount={setCorrectCount}
-              setIncorrectCount={setIncorrectCount}
-              gameText={activeGame}
-            />
-          )}
-        </NoSSR>
-      </main>
+      <GameProvider>
+        <main className="flex min-h-screen w-full flex-col items-center justify-start border-r-8  px-24">
+          <NoSSR>
+            <Header />
+            <GameBoard />
+          </NoSSR>
+        </main>
+      </GameProvider>
     </>
   );
 }
