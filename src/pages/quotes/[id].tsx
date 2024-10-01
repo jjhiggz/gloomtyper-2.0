@@ -49,6 +49,14 @@ const CategoryShowPage = () => {
                 </Link>
               ))}
             </ContentBox>
+
+            {quote.link && (
+              <a href={quote.link} target="_blank" rel="noopener noreferrer">
+                <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+                  View Quote
+                </button>
+              </a>
+            )}
           </div>
         ))
         .exhaustive()}
