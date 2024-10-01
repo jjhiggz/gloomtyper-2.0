@@ -52,7 +52,7 @@ async function runSeed() {
   await prisma.quote.create({
     data: {
       authorId: jrrTolkien.id,
-      name: "All that is gold does not glitter",
+      name: "Not all those who wander are lost",
       content: `Not all those who wander are lost`,
       categories: {
         connect: [
@@ -73,14 +73,7 @@ async function runSeed() {
     data: {
       authorId: jrrTolkien.id,
       name: "All that is gold does not glitter",
-      content: `All that is gold does not glitter,
-Not all those who wander are lost;
-The old that is strong does not wither,
-Deep roots are not reached by the frost.
-From the ashes a fire shall be woken,
-A light from the shadows shall spring;
-Renewed shall be blade that was broken,
-The crownless again shall be king.`,
+      content: `All that is gold does not glitter, Not all those who wander are lost; The old that is strong does not wither, Deep roots are not reached by the frost. From the ashes a fire shall be woken, A light from the shadows shall spring; Renewed shall be blade that was broken, The crownless again shall be king.`,
       categories: {
         connect: [
           {

@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { NavHeader } from "~/components/DataPageLayout";
 import { GameBoard } from "~/components/GameBoard";
 import Header from "~/components/Header";
 import NoSSR from "~/components/NoSSR";
@@ -16,6 +17,7 @@ function Home() {
       <GameProvider>
         <main className="flex min-h-screen w-full flex-col items-center justify-start border-r-8  px-24">
           <NoSSR>
+            <NavHeader showBackButton={false} />
             <Header />
             <GameBoard />
           </NoSSR>

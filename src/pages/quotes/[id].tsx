@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { pipe, uniqueBy } from "remeda";
 import { match, P } from "ts-pattern";
 import { ContentBox } from "~/components/ContentBox";
 import { DataPageLayout } from "~/components/DataPageLayout";
@@ -8,46 +7,37 @@ import { LoadingSpinner } from "~/components/LoadingWheel";
 import { abbreviate } from "~/utils/abbreviate-text";
 import { api } from "~/utils/api";
 
-const AuthorShowPage = () => {
+const CategoryShowPage = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { data: author } = api.gameRouter.getAuthor.useQuery(id as string);
-
-  const allCategories = pipe(
-    author?.quotes || [],
-    (n) => n.flatMap((quote) => quote.categories),
-    uniqueBy((n) => n.id)
-  );
+  const { data: quote } = api.gameRouter.getQuote.useQuery(id as string);
 
   return (
     <DataPageLayout>
-      {match(author)
+      {match(quote)
         .with(P.nullish, () => (
           <div className="flex w-full flex-col items-center justify-center gap-4">
             <div className="h-10 w-3/4 animate-pulse rounded bg-gray-300"></div>
             <LoadingSpinner />
           </div>
         ))
-        .with(P.not(P.nullish), (author) => (
+        .with(P.not(P.nullish), (quote) => (
           <div className="flex w-full flex-col items-center justify-center gap-4">
             <h1 className="text-center text-4xl">
-              <b>Author: </b> {author.name}
+              <b>Quote: </b> {quote.name}
             </h1>
-            <ContentBox title="Quotes">
-              {author.quotes.map((quote) => (
-                <Link
-                  key={quote.id}
-                  href={`/quotes/${quote.id}`}
-                  className=" flex h-10 items-center justify-center rounded bg-blue-100 px-2.5 py-0.5 text-sm font-semibold text-blue-800"
-                >
-                  {quote.name.length > 10
-                    ? abbreviate(quote.name, 10)
-                    : quote.name}
-                </Link>
-              ))}
-            </ContentBox>
-            <ContentBox title="Categories">
-              {allCategories.map((category) => (
+            <h2 className="text-center text-2xl">
+              <b>Author: </b>{" "}
+              <Link
+                href={`/authors/${quote.author.id}`}
+                className="text-blue-500 underline"
+              >
+                {quote.author.name}
+              </Link>
+            </h2>
+            <p className="px-20 italic">{quote.content}</p>
+            <ContentBox title="Categories For This Quote">
+              {quote?.categories.map((category) => (
                 <Link
                   key={category.id}
                   href={`/categories/${category.id}`}
@@ -66,4 +56,4 @@ const AuthorShowPage = () => {
   );
 };
 
-export default AuthorShowPage;
+export default CategoryShowPage;

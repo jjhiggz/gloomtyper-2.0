@@ -1,4 +1,4 @@
-import { type Quote, type Category } from "@prisma/client";
+import { type Quote, type Category, type Author } from "@prisma/client";
 import {
   createContext,
   type ReactNode,
@@ -21,6 +21,9 @@ import { useKeyListener } from "~/hooks/useKeyListener";
 import { useLocalStorageState } from "~/hooks/useLocalStorageState";
 import { useBeforeRefresh } from "~/hooks/useBeforeRefresh";
 
+type QuoteWithAuthor = Quote & {
+  author: Author;
+};
 type Setter<T> = Dispatch<SetStateAction<T>>;
 
 export type GameState = "none-selected" | "pending" | "active" | "finished";
@@ -32,9 +35,9 @@ type TGameContext = {
   setIncorrectCount: Setter<number>;
   activeCategory: Category | null;
   setActiveCategory: Setter<Category | null>;
-  activeGame: Quote | null;
+  activeGame: QuoteWithAuthor | null;
   loadGame: (categoryId: Category["id"]) => Promise<unknown>;
-  setActiveGame: Setter<Quote | null>;
+  setActiveGame: Setter<QuoteWithAuthor | null>;
   inputHandler: ChangeEventHandler<HTMLInputElement>;
   inputState: string;
   inputRef: RefObject<HTMLInputElement>;
@@ -73,10 +76,8 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
   );
   const [activeCategory, setActiveCategory] =
     useLocalStorageState<Category | null>("activeCategory", null);
-  const [activeGame, setActiveGame] = useLocalStorageState<null | Quote>(
-    "activeGame",
-    null
-  );
+  const [activeGame, setActiveGame] =
+    useLocalStorageState<null | QuoteWithAuthor>("activeGame", null);
   const [wordIndex, setWordIndex] = useLocalStorageState("wordIndex", 0);
   const [inputState, setInputState] = useLocalStorageState("inputState", "");
   const timerProps = useTimer(0);
@@ -228,6 +229,14 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       loadGame(activeCategory?.id).catch(console.error);
     },
   });
+
+  useEffect(() => {
+    if (gameState === "finished") {
+      player?.stop();
+      player?.restart();
+    }
+  }, [gameState, player]);
+
   return (
     <GameContext.Provider
       value={{

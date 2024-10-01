@@ -25,6 +25,9 @@ export const gameRouter = createTRPCRouter({
         },
       });
     }),
+  getAllQuotes: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.quote.findMany();
+  }),
   getQuote: publicProcedure
     .input(z.string().optional())
     .query(async ({ ctx, input }) => {
@@ -89,6 +92,9 @@ export const gameRouter = createTRPCRouter({
             },
           },
         },
+        include: {
+          author: true,
+        },
       });
 
       if (!games) return;
@@ -99,6 +105,7 @@ export const gameRouter = createTRPCRouter({
     const games = await ctx.prisma.quote.findMany({
       include: {
         categories: true,
+        author: true,
       },
     });
 
