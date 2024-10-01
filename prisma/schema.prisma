@@ -28,6 +28,7 @@ model Quote {
     id         String     @id @default(cuid())
     name       String
     content    String
+    link       String?
     categories Category[]
     author     Author     @relation(fields: [authorId], references: [id])
     authorId   String
