@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useLocalStorageState } from "./useLocalStorageState";
 
 const useTimer = (initialTime = 0) => {
-  const [time, setTime] = useState(initialTime);
-  const [isRunning, setIsRunning] = useState(false);
+  const [time, setTime] = useLocalStorageState("time", initialTime);
+  const [isRunning, setIsRunning] = useLocalStorageState("isRunning", false);
   const timerRef = useRef(null);
 
   // Start the timer

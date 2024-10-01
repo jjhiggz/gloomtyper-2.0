@@ -10,6 +10,22 @@ export const gameRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
+  getQuote: publicProcedure
+    .input(z.string().optional())
+    .query(async ({ ctx, input }) => {
+      if (!input) {
+        return null;
+      }
+      return await ctx.prisma.quote.findFirst({
+        where: {
+          id: input,
+        },
+        include: {
+          categories: true,
+          author: true,
+        },
+      });
+    }),
   getAllCategories: publicProcedure.query(async ({ ctx }) => {
     return await ctx.prisma.category.findMany();
   }),
@@ -20,6 +36,13 @@ export const gameRouter = createTRPCRouter({
       return await ctx.prisma.category.findFirst({
         where: {
           id: input,
+        },
+        include: {
+          quotes: {
+            include: {
+              author: true,
+            },
+          },
         },
       });
     }),

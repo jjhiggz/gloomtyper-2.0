@@ -18,6 +18,8 @@ import { type TrackedWord } from "~/types";
 import { apiRaw } from "~/utils/api";
 import { createTrackedWords, getRandomItem } from "~/utils/typing-test-utils";
 import { useKeyListener } from "~/hooks/useKeyListener";
+import { useLocalStorageState } from "~/hooks/useLocalStorageState";
+import { useBeforeRefresh } from "~/hooks/useBeforeRefresh";
 
 type Setter<T> = Dispatch<SetStateAction<T>>;
 
@@ -61,19 +63,28 @@ const getGameState = ({
 };
 
 export const GameProvider = ({ children }: { children: ReactNode }) => {
-  const [correctCount, setCorrectCount] = useState(0);
-  const [incorrectCount, setIncorrectCount] = useState(0);
-  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
-  const [activeGame, setActiveGame] = useState<null | Quote>(null);
+  const [correctCount, setCorrectCount] = useLocalStorageState(
+    "correctCount",
+    0
+  );
+  const [incorrectCount, setIncorrectCount] = useLocalStorageState(
+    "incorrectCount",
+    0
+  );
+  const [activeCategory, setActiveCategory] =
+    useLocalStorageState<Category | null>("activeCategory", null);
+  const [activeGame, setActiveGame] = useLocalStorageState<null | Quote>(
+    "activeGame",
+    null
+  );
+  const [wordIndex, setWordIndex] = useLocalStorageState("wordIndex", 0);
+  const [inputState, setInputState] = useLocalStorageState("inputState", "");
+  const timerProps = useTimer(0);
 
   const sampler = useSampler();
   const player = usePlayer();
 
-  const [wordIndex, setWordIndex] = useState(0);
-  const [inputState, setInputState] = useState("");
   const [trackedWords, setTrackedWords] = useState<TrackedWord[]>([]);
-
-  const timerProps = useTimer(0);
 
   const gameState = getGameState({
     activeGame,
@@ -118,6 +129,9 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       setActiveGame(randomGame);
     }
   };
+  useBeforeRefresh(() => {
+    resetToNextGame();
+  });
 
   useEffect(() => {
     if (wordIndex === 1) {
