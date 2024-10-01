@@ -43,6 +43,32 @@ async function runSeed() {
     },
   });
 
+  const shortQuotes = await prisma.category.create({
+    data: {
+      name: "Short Quotes",
+    },
+  });
+
+  await prisma.quote.create({
+    data: {
+      authorId: jrrTolkien.id,
+      name: "All that is gold does not glitter",
+      content: `Not all those who wander are lost`,
+      categories: {
+        connect: [
+          {
+            id: bookQuotes.id,
+          },
+          {
+            id: songs.id,
+          },
+          {
+            id: shortQuotes.id,
+          },
+        ],
+      },
+    },
+  });
   await prisma.quote.create({
     data: {
       authorId: jrrTolkien.id,
